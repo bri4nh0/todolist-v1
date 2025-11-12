@@ -12,11 +12,11 @@ export function TodoList (props) {
         todos.filter(val => !val.complete)
     return (
         <>
-            {filterTodosList.map((todo) => {
+            {filterTodosList.map((todo, todoIndex) => {
                 return (
                     <TodoCard 
-                        key={todo.id} 
-                        todoId={todo.id}
+                        key={todoIndex} 
+                        todoIndex={todoIndex}
                         {...props}
                         todo={todo} 
                     />

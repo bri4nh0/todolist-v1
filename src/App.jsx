@@ -6,9 +6,14 @@ import { TodoList } from "./components/TodoList"
 import { useState } from 'react'
 // App component that displays all components
 function App() {
+    
+  const date = new Date();
+  const showTime = date.getHours() 
+  + ':' + date.getMinutes();
+  
 
   const [todos, setTodos] = useState([
-    {input: 'Todo Placeholder', complete: true}
+    
   ])
 
   const [selectedTab, setSelectedTab] = useState('All')
@@ -36,6 +41,10 @@ function App() {
   }
   return (
     <>
+      <div className="time-container">
+        <h2>Current Time</h2>
+        <h2> {showTime} </h2>
+      </div>
       <Header todos={todos} />
       <Tabs selectedTab={selectedTab} 
             setSelectedTab={setSelectedTab} 

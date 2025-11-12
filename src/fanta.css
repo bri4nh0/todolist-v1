@@ -14,7 +14,7 @@
 *
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Grenze:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
     --background-primary: white;
@@ -65,9 +65,9 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-primary: #05070f;
-        --background-secondary: #0e101e;
-        --background-tertiary: #121424;
+        --background-primary: #4a70a9;
+        --background-secondary: #8fabd4;
+        --background-tertiary: #efece3;
         --background-accent: '';
         --background-compliment: '';
         --background-gradient: '';
@@ -116,7 +116,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Eczar", serif;
+    font-family: "Roboto", serif;
 }
 
 body {
@@ -128,11 +128,7 @@ body {
 
 /* Special */
 .text-gradient {
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    background-image: linear-gradient(135deg, var(--gradient-start) 0, var(--gradient-end) 100%);
-    background-size: 100%;
-    -webkit-box-decoration-break: clone;
+    color: var(--background-tertiary);
 }
 
 
@@ -144,7 +140,7 @@ h4,
 h5,
 h6,
 button {
-    font-family: "Grenze", serif;
+    font-family: "Roboto", serif;
     width: fit-content;
 }
 
@@ -659,6 +655,13 @@ details[open] summary {
 .card-button-secondary:hover {
     transform: none;
     opacity: 0.6;
+}
+
+.time-container {
+    display: flex;
+    flex-direction: right;
+    align-items: center;
+    gap: 5px;
 }
 
 
