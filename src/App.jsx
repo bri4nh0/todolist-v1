@@ -2,8 +2,10 @@ import { Header } from "./components/Header"
 import { Tabs } from "./components/Tabs"
 import { TodoInput } from "./components/TodoInput"
 import { TodoList } from "./components/TodoList"
+import { todoAPI } from "./services/todoAPI"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
 // App component that displays all components
 function App() {
     
@@ -12,39 +14,109 @@ function App() {
   + ':' + date.getMinutes();
   
 
-  const [todos, setTodos] = useState([
-    
-  ])
+  const [todos, setTodos] = useState([]);
+  const [selectedTab, setSelectedTab] = useState('All');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [selectedTab, setSelectedTab] = useState('All')
+  // Load todos on component mount
+  useEffect(() => {
+    loadTodos();
+  }, []);
 
-  function handleAddTodo(newTodo) {
-    const newTodoList = [...todos, {input: newTodo, complete:
-    false }]
-    setTodos(newTodoList)
+  const loadTodos = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fetchedTodos = await todoAPI.fetchTodos();
+      setTodos(fetchedTodos);
+    } catch (error) {
+      setError('Failed to load todos. Please check your connection.');
+      console.error('Load todos error:', error);
+    } finally {
+      setLoading(false);
     }
-  
+  };
 
-  function handleCompleteTodo(index) {
-    let newTodoList = [...todos]
-    let completedTodo = todos[index]
-    completedTodo['complete'] = true
-    newTodoList[index] = completedTodo
-    setTodos(newTodoList)
-  }
+  const handleAddTodo = async (newTodo) => {
+    if (!newTodo || newTodo.trim() === '') return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      await todoAPI.createTodo(newTodo);
+      await loadTodos(); // Refresh the list
+    } catch (error) {
+      setError('Failed to add todo. Please try again.');
+      console.error('Add todo error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  function handleDeleteTodo(index) {
-    let newTodoList = todos.filter ((val, valIndex) => {
-      return valIndex !== index
-    })
-    setTodos(newTodoList)
-  }
+  const handleCompleteTodo = async (index) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const todo = todos[index];
+      await todoAPI.updateTodo(todo.id, { complete: !todo.complete });
+      await loadTodos(); // Refresh the list
+    } catch (error) {
+      setError('Failed to update todo. Please try again.');
+      console.error('Update todo error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteTodo = async (index) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const todo = todos[index];
+      await todoAPI.deleteTodo(todo.id);
+      await loadTodos(); // Refresh the list
+    } catch (error) {
+      setError('Failed to delete todo. Please try again.');
+      console.error('Delete todo error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="time-container">
-        <h2>Current Time</h2>
+        <h1>Current Time</h1>
         <h2> {showTime} </h2>
       </div>
+      
+      {error && (
+        <div className="error-message" style={{
+          color: 'red', 
+          textAlign: 'center', 
+          margin: '1rem',
+          padding: '0.5rem',
+          backgroundColor: 'rgba(255, 0, 0, 0.1)',
+          borderRadius: '0.5rem',
+          border: '1px solid rgba(255, 0, 0, 0.3)'
+        }}>
+          ⚠️ {error}
+        </div>
+      )}
+      
+      {loading && (
+        <div className="loading-message" style={{
+          textAlign: 'center', 
+          margin: '1rem',
+          padding: '0.5rem',
+          backgroundColor: 'rgba(0, 100, 255, 0.1)',
+          borderRadius: '0.5rem',
+          color: 'var(--color-link)'
+        }}>
+          🔄 Loading...
+        </div>
+      )}
+      
       <Header todos={todos} />
       <Tabs selectedTab={selectedTab} 
             setSelectedTab={setSelectedTab} 
@@ -53,7 +125,7 @@ function App() {
                 handleDeleteTodo={handleDeleteTodo} 
                 selectedTab={selectedTab} 
                 todos={todos} />
-      <TodoInput handleAddTodo={handleAddTodo}/>
+      <TodoInput handleAddTodo={handleAddTodo} disabled={loading} />
     </>
   )
 }
